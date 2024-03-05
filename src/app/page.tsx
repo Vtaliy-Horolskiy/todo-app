@@ -7,18 +7,18 @@ import TodoList from "@/components/TodoList";
 
 function Todos() {
 
-  const {isLoading, error, data} = useQuery({
+  const {isLoading, isError, data} = useQuery({
     queryKey: ['todo'],
     queryFn: TodosApi
   });
 
   if(isLoading) return <SkeletonLayout/>
 
-  if(error) return <div>There was an error!</div>
+  if(isError) return <div>There was an error!</div>
 
   return (
     <>
-      <TodoList data={data}/>
+      {data && <TodoList data={data}/>}
     </>
   );
 }

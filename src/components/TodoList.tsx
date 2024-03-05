@@ -1,5 +1,7 @@
 import React, {useState} from "react";
 import {Layout, LegacyCard, List, Page, Text, LegacyStack} from "@shopify/polaris";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import TodosApiMutation from "@/api/TodosApiMutation";
 import TodoItem from "@/components/TodoItem";
 import FilteredTodos from "@/components/FilteredTodos";
 import AddTodoItem from "@/components/AddTodoItem";
@@ -14,13 +16,21 @@ function TodoList({data}) {
     setTodos(filteredTodos);
   }
 
+  const queryClient = useQueryClient();
+  const mutation = useMutation({
+    mutationFn: (newTodo) => TodosApiMutation(newTodo),
+    onSuccess: (data) => queryClient.invalidateQueries(['todo'])
+  })
+
   function addTodo(title){
     let random = Math.floor(Math.random() * (Math.floor(100000) - Math.ceil(15) + 1) + Math.ceil(15));
     let newTodo = {
+      userId: 1,
       id: random,
       title: title,
       completed: false
     };
+    mutation.mutate(newTodo);
     let newDataTodos = [newTodo , ...todos];
     setTodos(newDataTodos);
   }
